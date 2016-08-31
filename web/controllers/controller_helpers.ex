@@ -178,4 +178,15 @@ defmodule Coherence.ControllerHelpers do
   def redirect_to(conn, path, params) do
     apply(Coherence.Redirects, path, [conn, params])
   end
+  def redirect_to(conn, path, params, user) do
+    apply(Coherence.Redirects, path, [conn, params, user])
+  end
+
+  def changeset(which, module, model, params \\ %{}) do
+    {mod, fun, args} = case Application.get_env :coherence, :changeset do
+      nil -> {module, :changeset, [model, params]}
+      {mod, fun} -> {mod, fun, [model, params, which]}
+    end
+    apply mod, fun, args
+  end
 end
